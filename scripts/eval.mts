@@ -25,7 +25,7 @@ let passed = 0;
 let total = 0;
 const rows: string[] = [];
 
-for (const c of cases) {
+await Promise.all(cases.map(async (c) => {
   const n = normalizeFlatPayload(c.lead);
   const lead: Lead = {
     ...n,
@@ -67,8 +67,8 @@ for (const c of cases) {
     if (ok) passed++;
     rows.push(`${ok ? "✅" : "❌"} ${c.id.padEnd(22)} expected ${c.expected.padEnd(10)} got ${String(r.route).padEnd(10)} score ${String(r.score).padStart(3)}  ${(r.ms / 1000).toFixed(1)}s`);
   }
-  console.log(rows.slice(-runs.length).join("\n"));
-}
+}));
+console.log(rows.sort().join("\n"));
 
 console.log(`\nRouting accuracy: ${passed}/${total} (${((passed / total) * 100).toFixed(0)}%)`);
 process.exit(passed === total ? 0 : 1);

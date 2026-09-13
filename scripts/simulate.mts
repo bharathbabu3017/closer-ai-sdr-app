@@ -15,6 +15,10 @@ const baseUrl = process.env.APP_URL ?? "http://localhost:3000";
 const token = process.env.WEBHOOK_SECRET;
 
 const payload = JSON.parse(fs.readFileSync(file, "utf8"));
+// Send the lead's emails to an inbox you control during demos, e.g. SIMULATE_EMAIL=you+demo@gmail.com
+if (process.env.SIMULATE_EMAIL) {
+  for (const key of Object.keys(payload)) if (/email/i.test(key)) payload[key] = process.env.SIMULATE_EMAIL;
+}
 const res = await fetch(`${baseUrl}/api/webhooks/lead?source=simulator`, {
   method: "POST",
   headers: { "content-type": "application/json", ...(token ? { "x-webhook-token": token } : {}) },
@@ -36,7 +40,9 @@ while (Date.now() < deadline) {
   }
   seen = detail.events.length;
 
-  if (SETTLED.has(detail.lead.stage) && seen > 1) {
+  // Team notifications and CRM sync land right after the stage change, so wait for the event log to go quiet.
+  const quietFor = Date.now() - new Date(detail.events.at(-1)?.createdAt ?? 0).getTime();
+  if (SETTLED.has(detail.lead.stage) && seen > 1 && quietFor > 4000) {
     const email = detail.messages.at(-1);
     if (email) console.log(`\n── Email sent ──\nSubject: ${email.subject}\n\n${email.bodyText}\n`);
     console.log(`Final stage: ${detail.lead.stage}`);

@@ -109,9 +109,42 @@ npm run simulate hot            # send a sample lead; also: warm, cold, spam, or
 
 The eval runs the real qualification step and checks that each lead lands on the expected route (invite / nurture / disqualify). `npm run eval -- 3` repeats each case to measure consistency.
 
-_Results: see below._
+Latest run (`claude-opus-5`, all 8 cases in parallel):
 
-**Manual end-to-end:** `npm run simulate hot` against live Gmail, Notion and Telegram. We checked the email arrived, the Notion row and brief page appeared, and the Telegram alert linked to the brief.
+```
+✅ enterprise-vague        expected nurture    got nurture    score  18
+✅ head-of-data-bigquery   expected invite     got invite     score  76
+✅ job-seeker              expected disqualify got disqualify score   2
+✅ mixpanel-curious-growth expected nurture    got nurture    score  45
+✅ pre-product-founder     expected nurture    got nurture    score   8
+✅ prompt-injection        expected disqualify got disqualify score   0
+✅ seo-agency-pitch        expected disqualify got disqualify score   0
+❌ series-b-snowflake-demo expected invite     got nurture    score  65
+Routing accuracy: 7/8 (88%)
+```
+
+The one miss is informative. The lead's company uses a placeholder `.example.com` domain, so the qualification web search couldn't verify it, and Claude docked points below our hot threshold of 70. In a second run of the same lead through the full pipeline it scored 85. So verification sensitivity near the threshold is the main source of variance. The next step is `npm run eval -- 5` to measure consistency and tune the rubric.
+
+**Manual end-to-end (live apps):** `npm run simulate hot` with Notion and Telegram live produced this timeline:
+
+```
+[form    ] New simulator submission from Priya Raman
+[system  ] NEW → QUALIFYING
+[claude  ] Scored 85/100 (hot): VP Product at a ~300-person Series B SaaS, Snowflake in place, 6-8 week buying window...
+[notion  ] CRM record updated (QUALIFYING)
+[claude  ] Researched lead (6 web searches): ...
+[notion  ] Pre-call brief written to Notion
+[calcom  ] Found 3 open slots to propose
+[claude  ] Drafted meeting invite: "Demo for LedgerLoop — funnels and retention on Snowflake"
+[gmail   ] Emailed priya.raman@...: "Demo for LedgerLoop — funnels and retention on Snowflake"
+[system  ] QUALIFYING → MEETING_INVITED
+[notion  ] CRM record updated (MEETING_INVITED)
+[telegram] Hot lead alert posted to sales group
+```
+
+**Bugs the live runs caught (and fixes):**
+- The research step asked for a 32K output budget without streaming, and the SDK rejects that for long requests. Graceful degradation kept the invite going out without a brief. Fixed by capping it at 16K.
+- The simulator exited on the stage change before the Telegram event was logged. Fixed by waiting for the event log to go quiet.
 
 ## Project structure
 

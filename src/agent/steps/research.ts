@@ -23,7 +23,7 @@ export async function researchLead(lead: Lead, qualification: Qualification, con
 
   const runner = getAnthropic().beta.messages.toolRunner({
     ...baseParams(config),
-    max_tokens: 32000,
+    max_tokens: 16000,
     max_iterations: 10,
     output_config: { effort: "medium" },
     tools: [
