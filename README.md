@@ -1,6 +1,8 @@
 # Closer: an AI SDR that works your inbound pipeline
 
-**🎥 Demo video (2 min):** _link coming_
+**🎥 Demo video (2 min):** https://youtu.be/v7KoZbHvFUE
+
+[![Closer demo video](https://img.youtube.com/vi/v7KoZbHvFUE/hqdefault.jpg)](https://youtu.be/v7KoZbHvFUE)
 
 ## 1. Project overview
 
