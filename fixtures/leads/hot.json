@@ -1,0 +1,11 @@
+{
+  "full_name": "Priya Raman",
+  "work_email": "priya.raman@ledgerloop.example.com",
+  "company_name": "LedgerLoop",
+  "job_title": "VP of Product",
+  "company_website": "https://ledgerloop.example.com",
+  "team_size": "201-500",
+  "data_warehouse": "Snowflake",
+  "timeline": "This quarter",
+  "how_can_we_help": "We're a Series B AP-automation SaaS (~300 people). Our PMs wait 2-3 weeks for the data team to build every funnel and retention report, and we're losing visibility into churn in our mid-market segment. We already have everything in Snowflake. Looking to pick a self-serve analytics tool in the next 6-8 weeks and would like to see a demo."
+}

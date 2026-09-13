@@ -1,0 +1,80 @@
+# Closer agent configuration.
+# Copy to agent.config.yaml and edit. Everything here is fed to Claude as stable (cached) context,
+# so describe your business the way you'd brief a new SDR.
+
+company:
+  name: Acme Analytics
+  website: https://acme-analytics.example.com
+  one_liner: Product analytics for B2B SaaS teams that want answers without writing SQL.
+  product: |
+    Acme connects to your warehouse (Snowflake, BigQuery, Postgres) and gives PMs and growth teams
+    self-serve funnels, retention and revenue dashboards. Pricing starts at $1,500/month; enterprise
+    plans include SSO, audit logs and a dedicated success manager.
+  differentiators:
+    - Warehouse-native, no event pipeline to maintain
+    - Setup in under a day
+    - AI analyst that answers questions in plain English
+
+sender:
+  name: Jordan Lee
+  title: Founding Account Executive
+  email: jordan@acme-analytics.example.com
+  signature: |
+    Jordan Lee
+    Founding AE, Acme Analytics
+
+ideal_customer_profile:
+  description: |
+    B2B SaaS companies with 50-1000 employees, a data warehouse already in place, and a product
+    or growth team that is bottlenecked on data/analytics engineers.
+  good_signals:
+    - Uses Snowflake, BigQuery, Redshift or Databricks
+    - Series A or later, or clearly revenue-generating
+    - Buyer is Head of Product, VP Growth, Head of Data, or founder at a smaller company
+    - Mentions a concrete pain (slow reporting, dashboard backlog, churn visibility)
+    - Timeline within the next quarter
+  bad_signals:
+    - Students, job seekers, agencies reselling, or competitors
+    - Free email domains with no company context
+    - No warehouse and no plan to get one
+    - Pre-product startups with no users
+
+qualification:
+  # Score thresholds (0-100) used to map Claude's score to a pipeline route.
+  hot_min_score: 70
+  warm_min_score: 40
+  # Below warm_min_score is "cold". Claude can also label a lead "spam", which is always disqualified.
+  disqualify_cold: false
+  # Let Claude run a few web searches to verify the company before scoring.
+  web_search: true
+  max_web_searches: 3
+
+outreach:
+  tone: Warm, concise, and specific. No hype, no buzzwords, no exclamation marks. Under 150 words.
+  follow_up_days: [2, 5, 10]
+
+scheduling:
+  # Fallback booking link used until the Cal.com integration is configured.
+  booking_url: https://cal.com/acme/intro-call
+  meeting_length_minutes: 30
+
+# Content library the agent can pick from for nurture emails.
+materials:
+  - id: warehouse-native-guide
+    title: "The warehouse-native analytics playbook"
+    url: https://acme-analytics.example.com/guides/warehouse-native
+    description: Why teams are moving product analytics onto the warehouse, with a migration checklist.
+    best_for: Data leaders and teams evaluating Amplitude/Mixpanel alternatives
+  - id: churn-case-study
+    title: "How Lattice-style HR SaaS cut churn 18% with retention cohorts"
+    url: https://acme-analytics.example.com/customers/churn-case-study
+    description: Case study on using retention cohorts to spot churn risk early.
+    best_for: Growth and customer success leaders
+  - id: pricing-overview
+    title: "Pricing and plans"
+    url: https://acme-analytics.example.com/pricing
+    description: Plan comparison and what's included in each tier.
+    best_for: Smaller teams and early evaluators
+
+# auto: the agent sends emails itself. approve_outbound: emails wait for approval in the dashboard.
+autonomy: auto
