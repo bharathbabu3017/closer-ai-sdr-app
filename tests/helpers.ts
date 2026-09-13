@@ -34,6 +34,21 @@ export function stubAgent(q: Qualification = qualification()) {
       usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0 },
       webSearches: 0,
     })),
+    research: vi.fn<Agent["research"]>(async () => ({
+      brief: {
+        headline: "Series B SaaS evaluating analytics",
+        person: "VP Product",
+        company_overview: "AP automation",
+        recent_news: [],
+        likely_pains: ["Slow reporting"],
+        talking_points: ["Self-serve funnels"],
+        discovery_questions: ["Who owns dashboards?"],
+        risks: [],
+        sources: [],
+      },
+      usage: { input_tokens: 1, output_tokens: 1, cache_read_input_tokens: 0 },
+      webSearches: 2,
+    })),
     composeOutreach: vi.fn<Agent["composeOutreach"]>(async (input) => ({
       draft: {
         subject: `Hi ${input.lead.name}`,
@@ -52,5 +67,6 @@ export function makeDeps(agent: Agent = stubAgent()): PipelineDeps {
   vi.spyOn(adapters.mailer, "send");
   vi.spyOn(adapters.notifier, "send");
   vi.spyOn(adapters.crm, "upsertLead");
+  vi.spyOn(adapters.crm, "publishBrief");
   return { db: openDb(":memory:"), agent, adapters, config: testConfig };
 }

@@ -1,7 +1,7 @@
 import type { AgentConfig } from "@/src/config";
 import type { Lead } from "@/src/db/schema";
 import type { MeetingSlot } from "@/src/adapters/types";
-import type { OutreachKind, Qualification } from "./schemas";
+import type { Brief, OutreachKind, Qualification } from "./schemas";
 
 const bullets = (items: string[]) => items.map((i) => `- ${i}`).join("\n");
 
@@ -85,11 +85,15 @@ export function outreachPrompt(input: {
   lead: Lead;
   kind: OutreachKind;
   qualification: Qualification;
+  brief?: Brief;
   bookingLink: string;
   slots: MeetingSlot[];
   meetingMinutes: number;
 }): string {
-  const { lead, kind, qualification, bookingLink, slots, meetingMinutes } = input;
+  const { lead, kind, qualification, brief, bookingLink, slots, meetingMinutes } = input;
+  const research = brief
+    ? `\n<research>\n${brief.headline}\nCompany: ${brief.company_overview}\nRecent news: ${brief.recent_news.join("; ") || "none"}\nLikely pains: ${brief.likely_pains.join("; ")}\n</research>\nUse at most one well-grounded detail from the research; don't make the email feel like surveillance.\n`
+    : "";
   const slotText = slots
     .map((s) => `- ${s.start.toLocaleString("en-US", { weekday: "long", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" })}`)
     .join("\n");
@@ -111,6 +115,6 @@ Summary: ${qualification.summary}
 Fit signals: ${qualification.fit_signals.join("; ") || "none"}
 Company facts: ${qualification.company_facts.join("; ") || "none"}
 </qualification>
-
+${research}
 ${goal}`;
 }

@@ -16,6 +16,19 @@ export const QualificationSchema = z.object({
 });
 export type Qualification = z.infer<typeof QualificationSchema>;
 
+export const BriefSchema = z.object({
+  headline: z.string().describe("One sentence: who they are and why this call matters"),
+  person: z.string().describe("What we know about the contact: role, background, focus areas. Say so if little is public."),
+  company_overview: z.string().describe("What the company does, who it sells to, size and stage"),
+  recent_news: z.array(z.string()).describe("Recent funding, launches, hires or announcements, each with a date if known"),
+  likely_pains: z.array(z.string()).describe("Problems we can likely solve for them, grounded in evidence"),
+  talking_points: z.array(z.string()).describe("Specific angles for the call that connect their situation to our product"),
+  discovery_questions: z.array(z.string()).describe("Questions to ask on the call"),
+  risks: z.array(z.string()).describe("Deal risks or objections to prepare for"),
+  sources: z.array(z.object({ title: z.string(), url: z.string() })).describe("Web pages the brief is based on"),
+});
+export type Brief = z.infer<typeof BriefSchema>;
+
 export const OUTREACH_KINDS = ["meeting_invite", "nurture", "follow_up"] as const;
 export type OutreachKind = (typeof OUTREACH_KINDS)[number];
 

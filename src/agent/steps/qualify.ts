@@ -42,6 +42,7 @@ export async function qualifyLead(lead: Lead, config: AgentConfig): Promise<Qual
     ...baseParams(config),
     max_tokens: 16000,
     max_iterations: 6,
+    output_config: { effort: "medium" },
     tools,
     messages: [{ role: "user", content: qualifyPrompt(lead, config) }],
   });

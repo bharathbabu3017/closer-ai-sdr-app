@@ -50,6 +50,10 @@ export function createDryRunAdapters(config: AgentConfig): Adapters {
         log("notion", `upsert lead ${lead.email} → ${stage}`, { score: lead.score, tier: lead.tier, nextAction });
         return lead.crmRecordId ?? `dry-crm-${lead.id}`;
       },
+      async publishBrief(recordId, brief) {
+        log("notion", `publish brief on ${recordId}: ${brief.headline}`);
+        return `https://notion.so/dry-run/${recordId}`;
+      },
     },
     notifier: {
       app: "telegram",

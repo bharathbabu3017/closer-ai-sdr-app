@@ -4,12 +4,13 @@ import type { Lead } from "@/src/db/schema";
 import type { MeetingSlot } from "@/src/adapters/types";
 import { AgentRefusalError, addUsage, baseParams, getAnthropic, type UsageTotals } from "../client";
 import { outreachPrompt } from "../prompts";
-import { OutreachDraftSchema, type OutreachDraft, type OutreachKind, type Qualification } from "../schemas";
+import { OutreachDraftSchema, type Brief, type OutreachDraft, type OutreachKind, type Qualification } from "../schemas";
 
 export interface ComposeInput {
   lead: Lead;
   kind: OutreachKind;
   qualification: Qualification;
+  brief?: Brief;
   bookingLink: string;
   slots: MeetingSlot[];
 }

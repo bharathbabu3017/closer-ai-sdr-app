@@ -1,3 +1,4 @@
+import type { Brief } from "@/src/agent/schemas";
 import type { Lead, Stage } from "@/src/db/schema";
 
 /**
@@ -50,6 +51,8 @@ export interface Crm {
   readonly live: boolean;
   /** Creates or updates the lead's CRM record; returns the record id. */
   upsertLead(snapshot: CrmSnapshot): Promise<string>;
+  /** Writes the pre-call brief onto the lead's CRM record; returns a shareable URL. */
+  publishBrief(recordId: string, brief: Brief): Promise<string>;
 }
 
 export interface Notifier {

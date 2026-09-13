@@ -25,6 +25,9 @@ describe("pipeline: new lead", () => {
     expect(sent[0]).toMatchObject({ kind: "meeting_invite", status: "sent" });
     expect(sent[0].bodyText).toContain("https://cal.com/acme/intro");
     expect(deps.adapters.notifier.send).toHaveBeenCalledOnce();
+    expect(deps.adapters.crm.publishBrief).toHaveBeenCalledOnce();
+    expect(updated.briefUrl).toContain("notion.so");
+    expect(vi.mocked(deps.adapters.notifier.send).mock.calls[0][0]).toContain(updated.briefUrl!);
 
     const apps = new Set(deps.db.select().from(events).where(eq(events.leadId, lead.id)).all().map((e) => e.app));
     expect([...apps].sort()).toEqual(["calcom", "claude", "form", "gmail", "notion", "system", "telegram"]);
@@ -67,6 +70,18 @@ describe("pipeline: new lead", () => {
     expect(getLead(deps.db, lead.id).stage).toBe("MEETING_INVITED");
     const errors = deps.db.select().from(events).where(eq(events.type, "error")).all();
     expect(errors[0].summary).toContain("Notion is down");
+  });
+
+  it("still sends the invite when research fails", async () => {
+    const agent = stubAgent();
+    agent.research.mockRejectedValue(new Error("search timeout"));
+    const deps = makeDeps(agent);
+    const { lead } = ingestLead(deps.db, normalizeFlatPayload(submission), "test");
+    await runDueJobs(deps);
+
+    expect(getLead(deps.db, lead.id).stage).toBe("MEETING_INVITED");
+    expect(deps.adapters.mailer.send).toHaveBeenCalledOnce();
+    expect(deps.adapters.crm.publishBrief).not.toHaveBeenCalled();
   });
 
   it("retries a failing step with backoff, then marks the lead ERROR", async () => {
