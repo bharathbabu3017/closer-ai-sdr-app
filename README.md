@@ -67,6 +67,7 @@ npm run simulate hot            # send a sample lead; also: warm, cold, spam, or
    - Add the bot to your sales group and send a message.
    - Run `npm run setup telegram` to print `TELEGRAM_CHAT_ID`.
 5. Run `npm run setup check` to confirm every integration works.
+6. Optional for demos: set `DEMO_REDIRECT_EMAIL`. The agent still reasons about the real lead, but every email is delivered to your inbox.
 
 **Make it yours:** copy `agent.config.example.yaml` to `agent.config.yaml` and describe your company, ideal customer, score thresholds, tone and content library. That file is the agent's whole brief, and it's prompt-cached.
 

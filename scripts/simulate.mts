@@ -19,7 +19,7 @@ const payload = JSON.parse(fs.readFileSync(file, "utf8"));
 if (process.env.SIMULATE_EMAIL) {
   for (const key of Object.keys(payload)) if (/email/i.test(key)) payload[key] = process.env.SIMULATE_EMAIL;
 }
-const res = await fetch(`${baseUrl}/api/webhooks/lead?source=simulator`, {
+const res = await fetch(`${baseUrl}/api/webhooks/lead?source=website`, {
   method: "POST",
   headers: { "content-type": "application/json", ...(token ? { "x-webhook-token": token } : {}) },
   body: JSON.stringify(payload),

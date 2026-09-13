@@ -16,7 +16,12 @@ export function createAdapters(config: AgentConfig): Adapters {
 
   const e = process.env;
   if (e.GMAIL_USER && e.GMAIL_APP_PASSWORD) {
-    adapters.mailer = createGmailMailer(config, e.GMAIL_USER, e.GMAIL_APP_PASSWORD);
+    const gmail = createGmailMailer(config, e.GMAIL_USER, e.GMAIL_APP_PASSWORD);
+    const redirect = e.DEMO_REDIRECT_EMAIL;
+    // Demo mode: the agent sees the real lead, but the email is delivered to an inbox you control.
+    adapters.mailer = redirect
+      ? { ...gmail, send: (email) => gmail.send({ ...email, to: redirect, subject: `${email.subject} [to: ${email.to}]` }) }
+      : gmail;
   }
   if (e.NOTION_TOKEN && e.NOTION_DATABASE_ID) {
     adapters.crm = createNotionCrm(e.NOTION_TOKEN, e.NOTION_DATABASE_ID);
